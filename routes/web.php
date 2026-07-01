@@ -124,6 +124,7 @@ Route::middleware(['auth','active'])->group(function () {
         Route::get('/pendapatan',  [TherapistController::class, 'pendapatan'])->name('pendapatan');
         Route::get('/presensi',    [TherapistController::class, 'presensi'])->name('presensi');
         Route::post('/presensi',   [TherapistController::class, 'togglePresensi']);
+        Route::post('/presensi/homecare/{bookingId}', [TherapistController::class, 'toggleHomecarePresensi']);
         Route::get('/sesi/{bookingId}', [TherapistController::class, 'sesi'])->name('sesi');
         Route::post('/sesi/{bookingId}',[TherapistController::class, 'updateSesi']);
     });

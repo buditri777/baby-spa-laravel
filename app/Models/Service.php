@@ -27,4 +27,5 @@ class Service extends Model
     public function branch()   { return $this->belongsTo(Branch::class); }
     public function bookings() { return $this->hasMany(Booking::class); }
     public function fees()     { return $this->hasMany(TherapistFee::class); }
+    public function rate()     { return $this->hasOne(ServiceRate::class); }
 }
