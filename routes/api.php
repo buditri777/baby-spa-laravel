@@ -16,6 +16,12 @@ Route::prefix('v1')->group(function () {
     Route::post('auth/register', [AuthController::class, 'register']);
     Route::get('app/version',    fn() => response()->json(['version_code' => 0]));
 
+        // Wilayah proxy (public — tidak butuh auth)
+        Route::get('wilayah/provinces',            [WilayahController::class, 'provinces']);
+        Route::get('wilayah/regencies/{code}',     [WilayahController::class, 'regencies']);
+        Route::get('wilayah/districts/{code}',     [WilayahController::class, 'districts']);
+        Route::get('wilayah/villages/{code}',      [WilayahController::class, 'villages']);
+
     // ── Authenticated ────────────────────────────────
     Route::middleware('auth:sanctum')->group(function () {
         // Me
@@ -79,12 +85,6 @@ Route::prefix('v1')->group(function () {
         });
 
         Route::get('dashboard/pusat', [OwnerController::class, 'dashboardPusat']);
-
-        // Wilayah proxy
-        Route::get('wilayah/provinces',            [WilayahController::class, 'provinces']);
-        Route::get('wilayah/regencies/{code}',     [WilayahController::class, 'regencies']);
-        Route::get('wilayah/districts/{code}',     [WilayahController::class, 'districts']);
-        Route::get('wilayah/villages/{code}',      [WilayahController::class, 'villages']);
 
         // Layanan + Branch + Wilayah (public read)
         Route::get('layanan',  fn() => response()->json(\App\Models\Service::where('is_active',true)->get()));
