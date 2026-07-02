@@ -1,16 +1,22 @@
 <?php
 namespace App\Http\Controllers\Web\Owner;
 use App\Http\Controllers\Controller;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 
 class SosmedController extends Controller
 {
-    public function index() { return view('owner.sosmed'); }
-    public function create() { return view('owner.sosmed-form'); }
-    public function store(Request $request) { return redirect()->back()->with('success','Berhasil disimpan.'); }
-    public function show($id) { return view('owner.sosmed'); }
-    public function edit($id) { return view('owner.sosmed-form'); }
-    public function update(Request $request, $id) { return redirect()->back()->with('success','Berhasil diperbarui.'); }
-    public function destroy($id) { return redirect()->back()->with('success','Berhasil dihapus.'); }
-    public function ulasan($id = null) { return view('owner.sosmed'); }
+    private array $keys = ["instagram_url","facebook_url","tiktok_url","youtube_url","whatsapp_url"];
+
+    public function index() {
+        $settings = Setting::whereIn("key", $this->keys)->pluck("value","key");
+        return view("owner.sosmed", compact("settings"));
+    }
+
+    public function update(Request $request) {
+        foreach ($this->keys as $key) {
+            Setting::updateOrCreate(["key"=>$key],["value"=>$request->$key ?? ""]);
+        }
+        return redirect()->back()->with("success","Link sosmed disimpan.");
+    }
 }

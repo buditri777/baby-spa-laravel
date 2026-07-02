@@ -1,16 +1,24 @@
 <?php
 namespace App\Http\Controllers\Web\Owner;
 use App\Http\Controllers\Controller;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 
 class LandingController extends Controller
 {
-    public function index() { return view('owner.landing'); }
-    public function create() { return view('owner.landing-form'); }
-    public function store(Request $request) { return redirect()->back()->with('success','Berhasil disimpan.'); }
-    public function show($id) { return view('owner.landing'); }
-    public function edit($id) { return view('owner.landing-form'); }
-    public function update(Request $request, $id) { return redirect()->back()->with('success','Berhasil diperbarui.'); }
-    public function destroy($id) { return redirect()->back()->with('success','Berhasil dihapus.'); }
-    public function ulasan($id = null) { return view('owner.landing'); }
+    private array $keys = ["landing_email","landing_cs_phone","landing_services","landing_faq","privacy_policy"];
+
+    public function index() {
+        $settings = Setting::whereIn("key", $this->keys)->pluck("value","key");
+        return view("owner.landing", compact("settings"));
+    }
+
+    public function update(Request $request) {
+        foreach ($this->keys as $key) {
+            if ($request->has($key)) {
+                Setting::updateOrCreate(["key"=>$key],["value"=>$request->$key ?? ""]);
+            }
+        }
+        return redirect()->back()->with("success","Pengaturan landing disimpan.");
+    }
 }

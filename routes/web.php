@@ -107,6 +107,7 @@ Route::middleware(['auth','active'])->group(function () {
         Route::resource('users',      \App\Http\Controllers\Web\Owner\UserController::class);
         Route::get('/audit',          [AuditController::class,       'index'])->name('audit');
         Route::get('/sosmed',         [SosmedController::class,      'index'])->name('sosmed');
+        Route::put('/sosmed',         [SosmedController::class,      'update']);
         Route::get('/instagram',      [InstagramController::class,   'index'])->name('instagram');
         Route::get('/reservasi-ig',   [ReservasiIgController::class, 'index'])->name('reservasi-ig');
         Route::get('/landing',        [LandingController::class,     'index'])->name('landing');
