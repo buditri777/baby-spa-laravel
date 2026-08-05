@@ -7,7 +7,10 @@ use Illuminate\Http\Request;
 class CabangController extends Controller
 {
     public function index() {
-        $branches = Branch::withCount(['bookings','therapists'])->orderBy('name')->paginate(20);
+        // therapists count via users table (branch_id ada di users, bukan therapists)
+        $branches = Branch::withCount(['bookings',
+            'users as therapists_count' => fn($q) => $q->where('role','THERAPIST'),
+        ])->orderBy('name')->paginate(20);
         return view('owner.cabang', compact('branches'));
     }
     public function create() { return view('owner.cabang-form'); }

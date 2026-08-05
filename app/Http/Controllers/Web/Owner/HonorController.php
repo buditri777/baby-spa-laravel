@@ -17,9 +17,9 @@ class HonorController extends Controller
         $month = $request->month ?? now()->month;
         $q = Booking::with(['therapist','service','branch'])
             ->where('status','COMPLETED')
-            ->whereYear('scheduled_date',$year)->whereMonth('scheduled_date',$month);
+            ->whereYear('scheduled_at',$year)->whereMonth('scheduled_at',$month);
         if (!in_array($user->role,['OWNER','SUPER_ADMIN'])) $q->where('branch_id',$user->branch_id);
-        $bookings = $q->orderByDesc('scheduled_date')->paginate(30)->withQueryString();
+        $bookings = $q->orderByDesc('scheduled_at')->paginate(30)->withQueryString();
         $therapists  = User::where('role','THERAPIST')->where('is_active',true)->get();
         $services    = Service::where('is_active',true)->get();
         $serviceRates= ServiceRate::with('service')->get()->keyBy('service_id');

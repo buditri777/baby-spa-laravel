@@ -12,6 +12,10 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles, SoftDeletes;
+    use \App\Traits\HasCuid;
+
+    public $incrementing = false;
+    protected $keyType   = 'string';
 
     protected $fillable = [
         'id',
