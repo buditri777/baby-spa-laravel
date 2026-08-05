@@ -2,8 +2,8 @@
 
 {{-- Dashboard --}}
 <li class="menu-header small text-uppercase"><span class="menu-header-text">Menu Utama</span></li>
-<li class="menu-item {{ request()->is('dashboard') ? 'active' : '' }}">
-  <a href="{{ route('dashboard') }}" class="menu-link">
+<li class="menu-item {{ request()->is('parent/dashboard') || request()->is('owner/dashboard') || request()->is('therapist/jadwal') || request()->is('dashboard') ? 'active' : '' }}">
+  <a href="{{ $role === 'PARENT' ? route('parent.dashboard') : ($role === 'THERAPIST' ? route('therapist.jadwal') : route('owner.dashboard')) }}" class="menu-link">
     <span class="menu-icon"><span class="iconify" data-icon="tabler:home"></span></span>
     <div class="menu-text">Dashboard</div>
   </a>
@@ -11,20 +11,26 @@
 
 @if(in_array($role, ['PARENT']))
 <li class="menu-header small text-uppercase"><span class="menu-header-text">Anak & Booking</span></li>
-<li class="menu-item {{ request()->is('anak*') ? 'active' : '' }}">
-  <a href="{{ route('anak.index') }}" class="menu-link">
+<li class="menu-item {{ request()->is('parent/anak*') ? 'active' : '' }}">
+  <a href="{{ route('parent.anak.index') }}" class="menu-link">
     <span class="menu-icon"><span class="iconify" data-icon="tabler:baby-carriage"></span></span>
     <div class="menu-text">Data Anak</div>
   </a>
 </li>
-<li class="menu-item {{ request()->is('booking/create') ? 'active' : '' }}">
-  <a href="{{ route('booking.create') }}" class="menu-link">
-    <span class="menu-icon"><span class="iconify" data-icon="tabler:calendar-plus"></span></span>
-    <div class="menu-text">Buat Booking</div>
+<li class="menu-item {{ request()->is('parent/booking*') ? 'active' : '' }}">
+  <a href="{{ route('parent.booking.index') }}" class="menu-link">
+    <span class="menu-icon"><span class="iconify" data-icon="tabler:calendar-check"></span></span>
+    <div class="menu-text">Booking Saya</div>
   </a>
 </li>
-<li class="menu-item {{ request()->is('konsultasi*') ? 'active' : '' }}">
-  <a href="{{ route('konsultasi.index') }}" class="menu-link">
+<li class="menu-item {{ request()->is('parent/jadwal') ? 'active' : '' }}">
+  <a href="{{ route('parent.jadwal') }}" class="menu-link">
+    <span class="menu-icon"><span class="iconify" data-icon="tabler:calendar"></span></span>
+    <div class="menu-text">Jadwal</div>
+  </a>
+</li>
+<li class="menu-item {{ request()->is('parent/konsultasi*') ? 'active' : '' }}">
+  <a href="{{ route('parent.konsultasi.index') }}" class="menu-link">
     <span class="menu-icon"><span class="iconify" data-icon="tabler:message-circle"></span></span>
     <div class="menu-text">Tanya Terapis</div>
   </a>
