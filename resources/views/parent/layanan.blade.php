@@ -2,42 +2,65 @@
 @section("title","Katalog Layanan")
 @section("page-title","Katalog Layanan")
 @section("content")
+
+<div class="page-header">
+  <h4>Katalog Layanan</h4>
+  <p class="page-sub">Pilih layanan dan booking langsung.</p>
+</div>
+
 @if($children->isEmpty())
-<div class="alert alert-warning">Tambahkan data anak terlebih dahulu sebelum booking. <a href="{{ route('anak.create') }}">Tambah Anak</a></div>
+<div class="alert alert-warning mb-4">
+  <span class="iconify me-2" data-icon="tabler:alert-circle"></span>
+  Tambahkan data anak terlebih dahulu sebelum booking.
+  <a href="{{ route('anak.create') }}" class="fw-semibold">Tambah Anak</a>
+</div>
 @endif
+
 <div class="row g-3">
 @forelse($services as $s)
 <div class="col-sm-6 col-md-4">
-  <div class="card shadow-sm h-100">
-    @if($s->photo_url)<img src="{{ $s->photo_url }}" class="card-img-top" style="height:160px;object-fit:cover" alt="{{ $s->name }}">@endif
-    <div class="card-body">
-      <h6 class="fw-semibold">{{ $s->name }}</h6>
+  <div class="card h-100">
+    @if($s->photo_url)
+    <img src="{{ $s->photo_url }}" class="card-img-top" style="height:160px;object-fit:cover" alt="{{ $s->name }}">
+    @endif
+    <div class="card-body d-flex flex-column">
+      <h6 class="fw-semibold mb-1">{{ $s->name }}</h6>
       <p class="small text-muted mb-1">{{ $s->category }} · {{ $s->duration_min }} mnt</p>
       @if($s->age_min_months || $s->age_max_months)
-      <p class="small text-muted mb-1">Usia: {{ $s->age_min_months ?? 0 }}–{{ $s->age_max_months ?? '∞' }} bulan</p>
+      <p class="small text-muted mb-1">Usia: {{ $s->age_min_months ?? 0 }}–{{ $s->age_max_months ?? '∞' }} bln</p>
       @endif
-      <p class="fw-semibold text-pink mb-2">Rp{{ number_format($s->price,0,',','.') }}</p>
-      @if($s->description)<p class="small mb-2">{{ Str::limit($s->description,80) }}</p>@endif
+      <p class="fw-semibold mb-2" style="color:var(--brand)">Rp{{ number_format($s->price,0,',','.') }}</p>
+      @if($s->description)
+      <p class="small text-muted mb-2">{{ Str::limit($s->description,80) }}</p>
+      @endif
       @if(!$children->isEmpty())
-      <div class="d-flex gap-2 align-items-center">
+      <div class="mt-auto d-flex gap-2 align-items-center">
         <select class="form-select form-select-sm child-select" id="child-{{ $s->id }}">
-          <option value="">-- Pilih Anak --</option>
+          <option value="">— Pilih Anak —</option>
           @foreach($children as $c)
             <option value="{{ $c->id }}">{{ $c->name }}</option>
           @endforeach
         </select>
-        <a href="#" class="btn btn-sm btn-pink book-btn" data-service="{{ $s->id }}">Booking</a>
+        <a href="#" class="btn btn-sm btn-pink book-btn" data-service="{{ $s->id }}">
+          <span class="iconify" data-icon="tabler:calendar-plus"></span>
+        </a>
       </div>
       @endif
     </div>
   </div>
 </div>
 @empty
-<div class="col-12"><p class="text-muted text-center py-4">Belum ada layanan tersedia.</p></div>
+<div class="col-12">
+  <div class="card">
+    <div class="card-body text-center text-muted py-5">
+      <span class="iconify fs-3 d-block mb-2" data-icon="tabler:list-search"></span>
+      Belum ada layanan tersedia.
+    </div>
+  </div>
+</div>
 @endforelse
 </div>
 @endsection
-@push("styles")<style>.btn-pink{background:#e83e8c;color:#fff;}.btn-pink:hover{background:#c2185b;color:#fff;}.text-pink{color:#e83e8c;}</style>@endpush
 @push("scripts")
 <script>
 document.querySelectorAll('.book-btn').forEach(btn => {

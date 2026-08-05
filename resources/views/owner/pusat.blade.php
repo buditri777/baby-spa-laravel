@@ -2,40 +2,83 @@
 @section("title","Dasbor Pusat")
 @section("page-title","Dasbor Pusat")
 @section("content")
-<form method="GET" class="row g-2 mb-3">
-  <div class="col-auto"><input type="number" name="year" class="form-control form-control-sm" value="{{ $year }}" style="width:80px"></div>
-  <div class="col-auto">
+
+<div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
+  <div>
+    <h4>Dasbor Pusat</h4>
+    <p class="page-sub">Ringkasan performa seluruh cabang.</p>
+  </div>
+  <form method="GET" class="d-flex gap-2 align-items-center">
+    <input type="number" name="year" class="form-control form-control-sm" value="{{ $year }}" style="width:80px">
     <select name="month" class="form-select form-select-sm" style="width:130px">
       @for($m=1;$m<=12;$m++)
         <option value="{{ $m }}" @selected($month==$m)>{{ DateTime::createFromFormat("!m",$m)->format("F") }}</option>
       @endfor
     </select>
-  </div>
-  <div class="col-auto"><button class="btn btn-sm btn-outline-secondary">Filter</button></div>
-</form>
-
-<div class="row g-3 mb-4">
-  <div class="col-6 col-md-3"><div class="stat-card bg-success"><div class="small">Total Pendapatan</div><div class="fw-bold">Rp{{ number_format($totalRevenue,0,",",".") }}</div></div></div>
-  <div class="col-6 col-md-3"><div class="stat-card bg-primary"><div class="small">Total Booking</div><div class="fw-bold">{{ $totalBookings }}</div></div></div>
-  <div class="col-6 col-md-3"><div class="stat-card bg-danger"><div class="small">Total Pengeluaran</div><div class="fw-bold">Rp{{ number_format($totalExpense,0,",",".") }}</div></div></div>
-  <div class="col-6 col-md-3"><div class="stat-card" style="background:#6f42c1"><div class="small">Laba Bersih</div><div class="fw-bold">Rp{{ number_format($totalNet,0,",",".") }}</div></div></div>
-  <div class="col-6 col-md-3"><div class="stat-card" style="background:#e83e8c"><div class="small">Terapis Aktif</div><div class="fw-bold">{{ $therapistCount }}</div></div></div>
-  <div class="col-6 col-md-3"><div class="stat-card" style="background:#fd7e14"><div class="small">Total Pasien</div><div class="fw-bold">{{ $patientCount }}</div></div></div>
+    <button class="btn btn-sm btn-outline-secondary">
+      <span class="iconify me-1" data-icon="tabler:filter"></span>Filter
+    </button>
+  </form>
 </div>
 
-<div class="card shadow-sm">
-  <div class="card-header bg-white fw-semibold">Per Cabang</div>
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-2">
+    <div class="stat-card green">
+      <div class="stat-label">Pendapatan</div>
+      <div class="stat-value" style="font-size:1.1rem">Rp{{ number_format($totalRevenue,0,",",".") }}</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-2">
+    <div class="stat-card brand">
+      <div class="stat-label">Total Booking</div>
+      <div class="stat-value">{{ $totalBookings }}</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-2">
+    <div class="stat-card" style="background:linear-gradient(135deg,#dc3545 0%,#a71d2a 100%)">
+      <div class="stat-label">Pengeluaran</div>
+      <div class="stat-value" style="font-size:1.1rem">Rp{{ number_format($totalExpense,0,",",".") }}</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-2">
+    <div class="stat-card purple">
+      <div class="stat-label">Laba Bersih</div>
+      <div class="stat-value" style="font-size:1.1rem">Rp{{ number_format($totalNet,0,",",".") }}</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-2">
+    <div class="stat-card teal">
+      <div class="stat-label">Terapis Aktif</div>
+      <div class="stat-value">{{ $therapistCount }}</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-2">
+    <div class="stat-card" style="background:linear-gradient(135deg,#fd7e14 0%,#d35400 100%)">
+      <div class="stat-label">Total Pasien</div>
+      <div class="stat-value">{{ $patientCount }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <span class="iconify me-2 text-primary" data-icon="tabler:building-store"></span>Performa Per Cabang
+  </div>
   <div class="table-responsive">
-    <table class="table table-sm align-middle mb-0">
-      <thead class="table-light"><tr><th>Cabang</th><th>Booking</th><th>Pendapatan</th><th>Pengeluaran</th><th>Laba</th></tr></thead>
+    <table class="table table-hover mb-0">
+      <thead>
+        <tr><th>Cabang</th><th>Booking</th><th>Pendapatan</th><th>Pengeluaran</th><th>Laba</th></tr>
+      </thead>
       <tbody>
       @foreach($stats as $s)
       <tr>
-        <td>{{ $s["branch"]->name }}</td>
-        <td>{{ $s["bookings"] }}</td>
-        <td>Rp{{ number_format($s["revenue"],0,",",".") }}</td>
-        <td>Rp{{ number_format($s["expense"],0,",",".") }}</td>
-        <td class="{{ $s["net"]>=0?"text-success":"text-danger" }}"><strong>Rp{{ number_format($s["net"],0,",",".") }}</strong></td>
+        <td class="fw-semibold">{{ $s["branch"]->name }}</td>
+        <td><span class="badge badge-confirmed">{{ $s["bookings"] }}</span></td>
+        <td class="text-success fw-semibold">Rp{{ number_format($s["revenue"],0,",",".") }}</td>
+        <td class="text-muted">Rp{{ number_format($s["expense"],0,",",".") }}</td>
+        <td class="{{ $s["net"]>=0 ? "text-success" : "text-danger" }} fw-bold">
+          Rp{{ number_format($s["net"],0,",",".") }}
+        </td>
       </tr>
       @endforeach
       </tbody>

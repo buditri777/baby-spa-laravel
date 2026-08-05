@@ -2,60 +2,113 @@
 @section("title","Pengaturan")
 @section("page-title","Pengaturan Klinik")
 @section("content")
+
+<div class="page-header">
+  <h4>Pengaturan Klinik</h4>
+  <p class="page-sub">Informasi dan lokasi Sofia Baby Spa.</p>
+</div>
+
 <form method="POST" action="{{ route("owner.pengaturan") }}">
 @csrf @method("PUT")
-<div class="row g-3">
+<div class="row g-4">
+
+  {{-- Informasi Klinik --}}
   <div class="col-md-6">
-    <div class="card shadow-sm h-100">
-      <div class="card-header bg-white fw-semibold">Informasi Klinik</div>
+    <div class="card h-100">
+      <div class="card-header">
+        <span class="iconify me-2 text-primary" data-icon="tabler:building"></span>Informasi Klinik
+      </div>
       <div class="card-body">
         <div class="row g-3">
-          <div class="col-12"><label class="form-label">Nama Klinik</label>
-            <input type="text" name="klinik_name" class="form-control" value="{{ $settings["klinik_name"] ?? "" }}"></div>
-          <div class="col-12"><label class="form-label">Alamat</label>
-            <textarea name="klinik_address" class="form-control" rows="2">{{ $settings["klinik_address"] ?? "" }}</textarea></div>
-          <div class="col-md-6"><label class="form-label">Telepon</label>
-            <input type="text" name="klinik_phone" class="form-control" value="{{ $settings["klinik_phone"] ?? "" }}"></div>
-          <div class="col-md-6"><label class="form-label">Email</label>
-            <input type="email" name="klinik_email" class="form-control" value="{{ $settings["klinik_email"] ?? "" }}"></div>
-          <div class="col-12"><label class="form-label">WhatsApp CS</label>
-            <input type="text" name="klinik_wa" class="form-control" value="{{ $settings["klinik_wa"] ?? "" }}" placeholder="628xxxxxxxxxx"></div>
-          <div class="col-12"><label class="form-label">Deskripsi</label>
-            <textarea name="klinik_description" class="form-control" rows="3">{{ $settings["klinik_description"] ?? "" }}</textarea></div>
+          <div class="col-12">
+            <label class="form-label">Nama Klinik</label>
+            <input type="text" name="klinik_name" class="form-control"
+                   value="{{ $settings["klinik_name"] ?? "" }}">
+          </div>
+          <div class="col-12">
+            <label class="form-label">Alamat</label>
+            <textarea name="klinik_address" class="form-control" rows="2">{{ $settings["klinik_address"] ?? "" }}</textarea>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Telepon</label>
+            <input type="text" name="klinik_phone" class="form-control"
+                   value="{{ $settings["klinik_phone"] ?? "" }}">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Email</label>
+            <input type="email" name="klinik_email" class="form-control"
+                   value="{{ $settings["klinik_email"] ?? "" }}">
+          </div>
+          <div class="col-12">
+            <label class="form-label">WhatsApp CS</label>
+            <div class="input-group">
+              <span class="input-group-text">
+                <span class="iconify" data-icon="tabler:brand-whatsapp"></span>
+              </span>
+              <input type="text" name="klinik_wa" class="form-control"
+                     value="{{ $settings["klinik_wa"] ?? "" }}" placeholder="628xxxxxxxxxx">
+            </div>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Deskripsi</label>
+            <textarea name="klinik_description" class="form-control" rows="3">{{ $settings["klinik_description"] ?? "" }}</textarea>
+          </div>
         </div>
       </div>
     </div>
   </div>
+
+  {{-- Lokasi --}}
   <div class="col-md-6">
-    <div class="card shadow-sm h-100">
-      <div class="card-header bg-white fw-semibold">Lokasi Klinik (OpenStreetMap)</div>
+    <div class="card h-100">
+      <div class="card-header">
+        <span class="iconify me-2 text-primary" data-icon="tabler:map-pin"></span>Lokasi Klinik
+      </div>
       <div class="card-body">
-        <div class="row g-2 mb-2">
-          <div class="col-6"><label class="form-label small">Latitude</label>
-            <input type="text" name="klinik_latitude" id="lat" class="form-control form-control-sm" value="{{ $settings["klinik_latitude"] ?? "" }}" placeholder="-7.123456"></div>
-          <div class="col-6"><label class="form-label small">Longitude</label>
-            <input type="text" name="klinik_longitude" id="lng" class="form-control form-control-sm" value="{{ $settings["klinik_longitude"] ?? "" }}" placeholder="110.123456"></div>
+        <div class="row g-2 mb-3">
+          <div class="col-6">
+            <label class="form-label">Latitude</label>
+            <input type="text" name="klinik_latitude" id="lat" class="form-control form-control-sm"
+                   value="{{ $settings["klinik_latitude"] ?? "" }}" placeholder="-7.123456">
+          </div>
+          <div class="col-6">
+            <label class="form-label">Longitude</label>
+            <input type="text" name="klinik_longitude" id="lng" class="form-control form-control-sm"
+                   value="{{ $settings["klinik_longitude"] ?? "" }}" placeholder="110.123456">
+          </div>
         </div>
-        <button type="button" class="btn btn-sm btn-outline-secondary mb-2" id="gpsBtn"><i class="bx bx-current-location"></i> Gunakan Lokasi Saya</button>
-        <div id="map" style="height:280px;border-radius:.5rem;border:1px solid #dee2e6"></div>
+        <button type="button" class="btn btn-sm btn-outline-secondary mb-3" id="gpsBtn">
+          <span class="iconify me-1" data-icon="tabler:current-location"></span> Gunakan Lokasi Saya
+        </button>
+        <div id="map" style="height:260px;border-radius:.6rem;border:1px solid var(--border)"></div>
         @if(($settings["klinik_latitude"] ?? null) && ($settings["klinik_longitude"] ?? null))
-        <a href="https://www.google.com/maps?q={{ $settings["klinik_latitude"] }},{{ $settings["klinik_longitude"] }}" target="_blank" class="btn btn-sm btn-outline-info mt-2"><i class="bx bx-map-alt"></i> Lihat di Google Maps</a>
+        <a href="https://www.google.com/maps?q={{ $settings["klinik_latitude"] }},{{ $settings["klinik_longitude"] }}"
+           target="_blank" class="btn btn-sm btn-outline-primary mt-2">
+          <span class="iconify me-1" data-icon="tabler:map-2"></span> Lihat di Google Maps
+        </a>
         @endif
       </div>
     </div>
   </div>
-  <div class="col-12 d-flex gap-2 justify-content-end">
-    <button type="submit" class="btn btn-pink"><i class="bx bx-save"></i> Simpan Pengaturan</button>
+
+  <div class="col-12 d-flex justify-content-end">
+    <button type="submit" class="btn btn-pink">
+      <span class="iconify me-1" data-icon="tabler:device-floppy"></span> Simpan Pengaturan
+    </button>
   </div>
 </div>
 </form>
 
 @if(in_array(auth()->user()->role, ["SUPER_ADMIN"]))
-<div class="card shadow-sm mt-3">
-  <div class="card-header bg-white fw-semibold">Pengaturan RBAC</div>
+<div class="card mt-4">
+  <div class="card-header">
+    <span class="iconify me-2 text-primary" data-icon="tabler:shield-check"></span>Pengaturan RBAC
+  </div>
   <div class="card-body">
-    <p class="text-muted small mb-2">Kelola permission role secara dinamis dari database.</p>
-    <a href="#" class="btn btn-sm btn-outline-primary"><i class="bx bx-shield"></i> Kelola RBAC (coming soon)</a>
+    <p class="text-muted small mb-3">Kelola permission role secara dinamis dari database.</p>
+    <a href="#" class="btn btn-sm btn-outline-primary">
+      <span class="iconify me-1" data-icon="tabler:shield"></span> Kelola RBAC (coming soon)
+    </a>
   </div>
 </div>
 @endif
@@ -63,7 +116,6 @@
 
 @push("styles")
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<style>.btn-pink{background:#e83e8c;color:#fff;}.btn-pink:hover{background:#c2185b;color:#fff;}</style>
 @endpush
 
 @push("scripts")
@@ -71,7 +123,7 @@
 <script>
 const defaultLat = parseFloat(document.getElementById("lat").value) || -7.5755;
 const defaultLng = parseFloat(document.getElementById("lng").value) || 110.8243;
-const map    = L.map("map").setView([defaultLat, defaultLng], 15);
+const map = L.map("map").setView([defaultLat, defaultLng], 15);
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution: "© OpenStreetMap contributors"
 }).addTo(map);
@@ -80,14 +132,8 @@ function updateInputs(lat, lng) {
   document.getElementById("lat").value = lat.toFixed(7);
   document.getElementById("lng").value = lng.toFixed(7);
 }
-marker.on("dragend", e => {
-  const p = e.target.getLatLng();
-  updateInputs(p.lat, p.lng);
-});
-map.on("click", e => {
-  marker.setLatLng(e.latlng);
-  updateInputs(e.latlng.lat, e.latlng.lng);
-});
+marker.on("dragend", e => { const p = e.target.getLatLng(); updateInputs(p.lat, p.lng); });
+map.on("click", e => { marker.setLatLng(e.latlng); updateInputs(e.latlng.lat, e.latlng.lng); });
 ["lat","lng"].forEach(id => {
   document.getElementById(id).addEventListener("change", () => {
     const lat = parseFloat(document.getElementById("lat").value);

@@ -30,7 +30,7 @@ Route::prefix('v1')->group(function () {
         Route::post('me/fcm-token',  [AuthController::class, 'updateFcmToken']);
 
         // Anak
-        Route::apiResource('anak', AnakController::class)->only(['index','store','show','update']);
+        Route::apiResource('anak', AnakController::class)->only(['index','store','show','update'])->names(['index'=>'api.anak.index','store'=>'api.anak.store','show'=>'api.anak.show','update'=>'api.anak.update']);
         Route::get('anak/{id}/growth',    [AnakController::class, 'growth']);
         Route::get('anak/{id}/milestone', [AnakController::class, 'milestones']);
         Route::get('anak/{id}/exercise',  [AnakController::class, 'exercises']);

@@ -2,24 +2,30 @@
 @section("title","Booking Berhasil")
 @section("page-title","Booking Berhasil")
 @section("content")
-<div class="card shadow-sm" style="max-width:520px">
+
+<div class="card mx-auto" style="max-width:520px">
   <div class="card-body text-center py-5">
-    <div class="mb-3"><i class="bx bx-check-circle text-success" style="font-size:4rem"></i></div>
-    <h5 class="fw-semibold mb-1">Booking Berhasil!</h5>
+    <span class="iconify text-success d-block mb-3" data-icon="tabler:circle-check" style="font-size:4rem"></span>
+    <h5 class="fw-bold mb-1">Booking Berhasil!</h5>
     <p class="text-muted small mb-3">Kode booking Anda:</p>
-    <div class="alert alert-success py-2"><strong class="fs-5">{{ $booking->booking_code }}</strong></div>
-    <div class="text-start small mt-3">
-      <p class="mb-1"><strong>Anak:</strong> {{ $booking->child?->name }}</p>
-      <p class="mb-1"><strong>Layanan:</strong> {{ $booking->service?->name }}</p>
-      <p class="mb-1"><strong>Terapis:</strong> {{ $booking->therapist?->name ?? 'Belum ditentukan' }}</p>
-      <p class="mb-1"><strong>Tanggal:</strong> {{ $booking->scheduled_date?->format('d M Y') }} {{ $booking->scheduled_time }}</p>
-      @if($booking->is_homecare)<p class="mb-1"><span class="badge bg-info">Homecare</span></p>@endif
+    <div class="alert alert-success py-2 mb-4">
+      <strong class="fs-5">{{ $booking->booking_code }}</strong>
     </div>
-    <div class="mt-4 d-flex gap-2 justify-content-center">
-      <a href="{{ route('jadwal') }}" class="btn btn-pink btn-sm"><i class="bx bx-calendar"></i> Lihat Jadwal</a>
-      <a href="{{ route('layanan') }}" class="btn btn-outline-secondary btn-sm">Booking Lagi</a>
+    <div class="text-start small p-3 rounded mb-4" style="background:var(--surface-2)">
+      <div class="mb-1"><span class="text-muted">Anak:</span> <strong>{{ $booking->child?->name }}</strong></div>
+      <div class="mb-1"><span class="text-muted">Layanan:</span> <strong>{{ $booking->service?->name }}</strong></div>
+      <div class="mb-1"><span class="text-muted">Terapis:</span> <strong>{{ $booking->therapist?->name ?? 'Belum ditentukan' }}</strong></div>
+      <div class="mb-1"><span class="text-muted">Tanggal:</span> <strong>{{ $booking->scheduled_date?->format('d M Y') }} {{ $booking->scheduled_time }}</strong></div>
+      @if($booking->is_homecare)
+      <div class="mt-2"><span class="badge badge-pending">Homecare</span></div>
+      @endif
+    </div>
+    <div class="d-flex gap-2 justify-content-center">
+      <a href="{{ route('jadwal') }}" class="btn btn-sm btn-pink">
+        <span class="iconify me-1" data-icon="tabler:calendar"></span> Lihat Jadwal
+      </a>
+      <a href="{{ route('layanan') }}" class="btn btn-sm btn-outline-secondary">Booking Lagi</a>
     </div>
   </div>
 </div>
 @endsection
-@push("styles")<style>.btn-pink{background:#e83e8c;color:#fff;}.btn-pink:hover{background:#c2185b;color:#fff;}</style>@endpush

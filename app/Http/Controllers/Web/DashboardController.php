@@ -18,7 +18,7 @@ class DashboardController extends Controller
         if ($user->role === "PARENT") {
             $recentBookings = Booking::with(["child","service","therapist"])
                 ->whereHas("child", fn($q) => $q->where("parent_id", $user->id))
-                ->orderByDesc("scheduled_date")->take(5)->get();
+                ->orderByDesc("scheduled_at")->take(5)->get();
             $children = Child::where("parent_id", $user->id)->count();
             return view("dashboard", compact("recentBookings","children"));
         }
@@ -26,11 +26,11 @@ class DashboardController extends Controller
         if ($user->role === "THERAPIST") {
             $todayBookings = Booking::with(["child","service"])
                 ->where("therapist_id", $user->id)
-                ->whereDate("scheduled_date", $today)->get();
+                ->whereDate("scheduled_at", $today)->get();
             return view("dashboard", compact("todayBookings"));
         }
 
-        $qBooking = Booking::whereDate("scheduled_date", $today);
+        $qBooking = Booking::whereDate("scheduled_at", $today);
         $qRevenue = Payment::where("status","PAID")->whereMonth("paid_at", now()->month)->whereYear("paid_at", now()->year);
         if ($scope) {
             $qBooking->where("branch_id", $scope);
@@ -44,7 +44,7 @@ class DashboardController extends Controller
             "totalTherapists" => User::where("role","THERAPIST")->where("is_active",true)->count(),
             "recentBookings"  => Booking::with(["child","service","therapist"])
                 ->when($scope, fn($q) => $q->where("branch_id", $scope))
-                ->orderByDesc("scheduled_date")->take(10)->get(),
+                ->orderByDesc("scheduled_at")->take(10)->get(),
         ]);
     }
 

@@ -2,27 +2,41 @@
 @section("title","Pasien Saya")
 @section("page-title","Pasien Saya")
 @section("content")
-<div class="card shadow-sm">
-  <div class="card-header bg-white fw-semibold">Daftar Pasien</div>
-  <div class="card-body">
-    <div class="table-responsive">
-      <table class="table table-hover table-sm align-middle">
-        <thead class="table-light"><tr><th>Nama Anak</th><th>Orang Tua</th><th>Gender</th><th>Tgl Lahir</th></tr></thead>
-        <tbody>
-        @forelse($children as $c)
-        <tr>
-          <td>{{ $c->name }}</td>
-          <td>{{ $c->parent?->name }}</td>
-          <td>{{ $c->gender === "L" ? "Laki-laki" : "Perempuan" }}</td>
-          <td>{{ $c->birth_date?->format("d M Y") }}</td>
-        </tr>
-        @empty
-        <tr><td colspan="4" class="text-center text-muted py-4">Belum ada pasien.</td></tr>
-        @endforelse
-        </tbody>
-      </table>
-    </div>
-    {{ $children->links() }}
+
+<div class="page-header">
+  <h4>Pasien Saya</h4>
+  <p class="page-sub">Daftar anak yang pernah ditangani.</p>
+</div>
+
+<div class="card">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead>
+        <tr><th>Nama Anak</th><th>Orang Tua</th><th>Gender</th><th>Tgl Lahir</th></tr>
+      </thead>
+      <tbody>
+      @forelse($children as $c)
+      <tr>
+        <td class="fw-semibold">{{ $c->name }}</td>
+        <td class="text-muted">{{ $c->parent?->name }}</td>
+        <td>
+          <span class="badge {{ $c->gender === 'L' ? 'badge-confirmed' : 'badge-pending' }}">
+            {{ $c->gender === "L" ? "Laki-laki" : "Perempuan" }}
+          </span>
+        </td>
+        <td class="text-muted small">{{ $c->birth_date?->format("d M Y") }}</td>
+      </tr>
+      @empty
+      <tr><td colspan="4" class="text-center text-muted py-5">
+        <span class="iconify fs-3 d-block mb-2" data-icon="tabler:users-group"></span>
+        Belum ada pasien.
+      </td></tr>
+      @endforelse
+      </tbody>
+    </table>
   </div>
+  @if($children->hasPages())
+  <div class="card-body pt-0 pb-3">{{ $children->links() }}</div>
+  @endif
 </div>
 @endsection

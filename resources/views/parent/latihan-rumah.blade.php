@@ -2,23 +2,38 @@
 @section("title","Latihan Rumah")
 @section("page-title","Latihan Rumah — {{ $child->name }}")
 @section("content")
-<div class="card shadow-sm">
-  <div class="card-header bg-white fw-semibold">Program Latihan Rumah</div>
+
+<div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
+  <div>
+    <h4>Latihan Rumah</h4>
+    <p class="page-sub">Program latihan mandiri untuk {{ $child->name }}.</p>
+  </div>
+  <a href="{{ route('anak.show',$child->id) }}" class="btn btn-sm btn-outline-secondary">
+    <span class="iconify me-1" data-icon="tabler:arrow-left"></span> Kembali
+  </a>
+</div>
+
+@forelse($exercises as $e)
+<div class="card mb-3">
   <div class="card-body">
-    @forelse($exercises as $e)
-    <div class="card mb-2 border-0 shadow-sm">
-      <div class="card-body py-2 px-3">
-        <div class="fw-semibold">{{ $e->title }}</div>
-        <div class="small text-muted mb-1">{{ \Carbon\Carbon::parse($e->created_at)->format('d M Y') }}</div>
-        <div class="small">{!! nl2br(e($e->description)) !!}</div>
-        @if($e->video_url)<a href="{{ $e->video_url }}" target="_blank" class="btn btn-xs btn-outline-info mt-1"><i class="bx bx-play"></i> Video</a>@endif
-      </div>
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
+      <div class="fw-semibold">{{ $e->title }}</div>
+      <div class="small text-muted">{{ \Carbon\Carbon::parse($e->created_at)->format('d M Y') }}</div>
     </div>
-    @empty
-    <p class="text-muted text-center py-4">Belum ada program latihan rumah.</p>
-    @endforelse
+    <div class="small text-muted">{!! nl2br(e($e->description)) !!}</div>
+    @if($e->video_url)
+    <a href="{{ $e->video_url }}" target="_blank" class="btn btn-sm btn-outline-primary mt-2">
+      <span class="iconify me-1" data-icon="tabler:player-play"></span> Video
+    </a>
+    @endif
   </div>
 </div>
-<a href="{{ route('anak.show',$child->id) }}" class="btn btn-outline-secondary mt-3 btn-sm"><i class="bx bx-arrow-back"></i> Kembali</a>
+@empty
+<div class="card">
+  <div class="card-body text-center text-muted py-5">
+    <span class="iconify fs-3 d-block mb-2" data-icon="tabler:barbell-off"></span>
+    Belum ada program latihan rumah.
+  </div>
+</div>
+@endforelse
 @endsection
-@push("styles")<style>.btn-xs{padding:.15rem .4rem;font-size:.75rem;}</style>@endpush
