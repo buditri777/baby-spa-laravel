@@ -45,7 +45,7 @@ class TherapistController extends Controller
             ->where('status','COMPLETED')
             ->whereYear('scheduled_at',$year)
             ->whereMonth('scheduled_at',$month)
-            ->get();
+            ->paginate(30)->withQueryString();
         $serviceRates = ServiceRate::get()->keyBy('service_id');
         $total = 0;
         foreach ($bookings as $b) {

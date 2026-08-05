@@ -11,9 +11,8 @@ use Illuminate\Http\Request;
 
 class LaporanController extends Controller
 {
-    private function branchFilter($q, $user) {
-        if (!in_array($user->role,['OWNER','SUPER_ADMIN'])) $q->where('branch_id',$user->branch_id);
-        return $q;
+    public function index() {
+        return redirect()->route('owner.laporan.pendapatan');
     }
 
     public function pendapatan(Request $request) {

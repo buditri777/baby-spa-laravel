@@ -11,6 +11,26 @@ use Illuminate\Http\Request;
 
 class ParentController extends Controller
 {
+    public function dashboard() {
+        $user     = auth()->user();
+        $children = Child::where('parent_id', $user->id)->count();
+        $bookings = Booking::whereHas('child', fn($q) => $q->where('parent_id', $user->id))
+            ->orderByDesc('scheduled_at')->take(5)->get();
+        $upcoming = Booking::whereHas('child', fn($q) => $q->where('parent_id', $user->id))
+            ->where('scheduled_at','>=', now())
+            ->whereIn('status',['CONFIRMED','REQUESTED'])
+            ->count();
+        return view('parent.dashboard', compact('children','bookings','upcoming'));
+    }
+
+    public function bookingIndex() {
+        $bookings = Booking::whereHas('child', fn($q) => $q->where('parent_id', auth()->id()))
+            ->with(['child','service','therapist'])
+            ->orderByDesc('scheduled_at')
+            ->paginate(15);
+        return view('parent.booking-index', compact('bookings'));
+    }
+
     public function anakIndex() {
         $children = Child::where('parent_id', auth()->id())->orderBy('name')->get();
         return view('parent.anak-index', compact('children'));

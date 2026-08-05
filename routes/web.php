@@ -48,32 +48,38 @@ Route::middleware(['auth','active'])->group(function () {
     Route::get('/akun',      [DashboardController::class, 'akun'])->name('akun');
     Route::put('/akun',      [DashboardController::class, 'updateAkun']);
 
-    // Anak (PARENT)
-    Route::prefix('anak')->name('anak.')->group(function () {
-        Route::get('/',           [ParentController::class, 'anakIndex'])->name('index');
-        Route::get('/baru',       [ParentController::class, 'anakCreate'])->name('create');
-        Route::post('/',          [ParentController::class, 'anakStore'])->name('store');
-        Route::get('/{id}',       [ParentController::class, 'anakShow'])->name('show');
-        Route::get('/{id}/edit',  [ParentController::class, 'anakEdit'])->name('edit');
-        Route::put('/{id}',       [ParentController::class, 'anakUpdate'])->name('update');
-        Route::get('/{id}/tumbuh-kembang', [ParentController::class, 'tumbuhKembang'])->name('tumbuh');
-        Route::get('/{id}/latihan-rumah',  [ParentController::class, 'latihanRumah'])->name('latihan');
-    });
+    // ── PARENT ───────────────────────────────────────
+    Route::middleware('role:PARENT')
+        ->prefix('parent')->name('parent.')->group(function () {
+        Route::get('/dashboard',  [ParentController::class, 'dashboard'])->name('dashboard');
+        Route::get('/jadwal',     [ParentController::class, 'jadwal'])->name('jadwal');
+        Route::get('/layanan',    [ParentController::class, 'layanan'])->name('layanan');
 
-    // Booking (PARENT)
-    Route::prefix('booking')->name('booking.')->group(function () {
-        Route::get('/baru',      [ParentController::class, 'bookingCreate'])->name('create');
-        Route::post('/',         [ParentController::class, 'bookingStore'])->name('store');
-        Route::get('/{id}/sukses', [ParentController::class, 'bookingSukses'])->name('sukses');
-    });
+        Route::prefix('anak')->name('anak.')->group(function () {
+            Route::get('/',           [ParentController::class, 'anakIndex'])->name('index');
+            Route::get('/baru',       [ParentController::class, 'anakCreate'])->name('create');
+            Route::post('/',          [ParentController::class, 'anakStore'])->name('store');
+            Route::get('/{id}',       [ParentController::class, 'anakShow'])->name('show');
+            Route::get('/{id}/edit',  [ParentController::class, 'anakEdit'])->name('edit');
+            Route::put('/{id}',       [ParentController::class, 'anakUpdate'])->name('update');
+            Route::get('/{id}/tumbuh-kembang', [ParentController::class, 'tumbuhKembang'])->name('tumbuh');
+            Route::get('/{id}/latihan-rumah',  [ParentController::class, 'latihanRumah'])->name('latihan');
+        });
 
-    // Jadwal & Layanan & Konsultasi (PARENT/shared)
-    Route::get('/jadwal',       [ParentController::class, 'jadwal'])->name('jadwal');
-    Route::get('/layanan',      [ParentController::class, 'layanan'])->name('layanan');
-    Route::get('/konsultasi',            [ParentController::class, 'konsultasiIndex'])->name('konsultasi.index');
-    Route::get('/konsultasi/baru',       [ParentController::class, 'konsultasiBaru'])->name('konsultasi.create');
-    Route::post('/konsultasi',           [ParentController::class, 'konsultasiStore'])->name('konsultasi.store');
-    Route::get('/konsultasi/{id}',       [ParentController::class, 'konsultasiShow'])->name('konsultasi.show');
+        Route::prefix('booking')->name('booking.')->group(function () {
+            Route::get('/',          [ParentController::class, 'bookingIndex'])->name('index');
+            Route::get('/baru',      [ParentController::class, 'bookingCreate'])->name('create');
+            Route::post('/',         [ParentController::class, 'bookingStore'])->name('store');
+            Route::get('/{id}/sukses', [ParentController::class, 'bookingSukses'])->name('sukses');
+        });
+
+        Route::prefix('konsultasi')->name('konsultasi.')->group(function () {
+            Route::get('/',      [ParentController::class, 'konsultasiIndex'])->name('index');
+            Route::get('/baru',  [ParentController::class, 'konsultasiBaru'])->name('create');
+            Route::post('/',     [ParentController::class, 'konsultasiStore'])->name('store');
+            Route::get('/{id}',  [ParentController::class, 'konsultasiShow'])->name('show');
+        });
+    });
 
     // ── OWNER / ADMIN / DIREKTUR ─────────────────────
     Route::middleware('role:OWNER,ADMIN,SUPER_ADMIN,DIREKTUR,RECEPTIONIST')
@@ -89,14 +95,16 @@ Route::middleware(['auth','active'])->group(function () {
         Route::resource('layanan',   LayananController::class);
         Route::resource('pengeluaran', PengeluaranController::class);
         Route::resource('penggajian',  PenggajianController::class);
+        Route::get('/calendar',       [KalenderController::class,   'index'])->name('calendar');
+        Route::get('/kalender',       [KalenderController::class,   'index'])->name('kalender');
         Route::prefix('laporan')->name('laporan.')->group(function () {
+            Route::get('/',           [LaporanController::class, 'index'])->name('index');
             Route::get('/pendapatan', [LaporanController::class, 'pendapatan'])->name('pendapatan');
             Route::get('/advanced',   [LaporanController::class, 'advanced'])->name('advanced');
             Route::get('/pembukuan',  [LaporanController::class, 'pembukuan'])->name('pembukuan');
             Route::get('/pajak',      [LaporanController::class, 'pajak'])->name('pajak');
             Route::get('/referral',   [LaporanController::class, 'referral'])->name('referral');
         });
-        Route::get('/calendar',       [KalenderController::class,   'index'])->name('calendar');
         Route::get('/honor',          [HonorController::class,      'index'])->name('honor');
         Route::get('/konsultasi',     [KonsultasiController::class,  'index'])->name('konsultasi');
         Route::get('/jadwal-terapis', [JadwalTerapisController::class,'index'])->name('jadwal-terapis');
