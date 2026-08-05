@@ -17,8 +17,8 @@ class TherapistController extends Controller
         $date = $request->date ?? now('Asia/Jakarta')->toDateString();
         $bookings = Booking::with(['child','service','branch'])
             ->where('therapist_id', $user->id)
-            ->whereDate('scheduled_date', $date)
-            ->orderBy('scheduled_time')->get();
+            ->whereDate('scheduled_at', $date)
+            ->orderBy('scheduled_at')->get();
         return view('therapist.jadwal', compact('bookings','date'));
     }
 
@@ -43,8 +43,8 @@ class TherapistController extends Controller
         $bookings = Booking::with('service')
             ->where('therapist_id', $user->id)
             ->where('status','COMPLETED')
-            ->whereYear('scheduled_date',$year)
-            ->whereMonth('scheduled_date',$month)
+            ->whereYear('scheduled_at',$year)
+            ->whereMonth('scheduled_at',$month)
             ->get();
         $serviceRates = ServiceRate::get()->keyBy('service_id');
         $total = 0;
@@ -67,7 +67,7 @@ class TherapistController extends Controller
         $homecareToday = Booking::with(['child','service'])
             ->where('therapist_id', auth()->id())
             ->where('is_homecare', true)
-            ->whereDate('scheduled_date', now('Asia/Jakarta')->toDateString())
+            ->whereDate('scheduled_at', now('Asia/Jakarta')->toDateString())
             ->get();
         return view('therapist.presensi', compact('attendance','homecareToday'));
     }

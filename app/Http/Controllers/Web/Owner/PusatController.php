@@ -20,7 +20,7 @@ class PusatController extends Controller
                 ->whereHas("booking", fn($b) => $b->where("branch_id",$br->id))
                 ->whereYear("paid_at",$year)->whereMonth("paid_at",$month)->sum("amount");
             $bookingCount = Booking::where("branch_id",$br->id)
-                ->whereYear("scheduled_date",$year)->whereMonth("scheduled_date",$month)->count();
+                ->whereYear("scheduled_at",$year)->whereMonth("scheduled_at",$month)->count();
             $expense = Expense::where("branch_id",$br->id)
                 ->whereYear("expense_date",$year)->whereMonth("expense_date",$month)->sum("amount");
             $stats[] = ["branch"=>$br,"revenue"=>$revenue,"bookings"=>$bookingCount,"expense"=>$expense,"net"=>$revenue-$expense];

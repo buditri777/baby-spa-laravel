@@ -51,7 +51,7 @@ class ParentController extends Controller
     public function jadwal() {
         $bookings = Booking::with(['child','service','therapist','branch'])
             ->where('parent_id', auth()->id())
-            ->orderByDesc('scheduled_date')->paginate(20);
+            ->orderByDesc('scheduled_at')->paginate(20);
         return view('parent.jadwal', compact('bookings'));
     }
     public function layanan() {

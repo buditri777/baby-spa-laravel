@@ -40,7 +40,7 @@ class PenggajianController extends Controller
         $therapists = User::where('role','THERAPIST')->where('branch_id',$data['branch_id'])->where('is_active',true)->get();
         foreach ($therapists as $t) {
             $sessions = Booking::where('therapist_id',$t->id)->where('status','COMPLETED')
-                ->whereYear('scheduled_date',$data['year'])->whereMonth('scheduled_date',$data['month'])->with('service')->get();
+                ->whereYear('scheduled_at',$data['year'])->whereMonth('scheduled_at',$data['month'])->with('service')->get();
             $sessionFee = 0;
             foreach ($sessions as $b) {
                 $rate = ServiceRate::where('service_id',$b->service_id)->first();

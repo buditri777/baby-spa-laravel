@@ -17,9 +17,9 @@ class BookingController extends Controller
             $q->where('branch_id', $user->branch_id);
         }
         if ($request->status) $q->where('status', $request->status);
-        if ($request->date)   $q->whereDate('scheduled_date', $request->date);
+        if ($request->date)   $q->whereDate('scheduled_at', $request->date);
         if ($request->search) $q->whereHas('child', fn($c) => $c->where('name','like',"%{$request->search}%"));
-        $bookings = $q->orderByDesc('scheduled_date')->orderByDesc('scheduled_time')->paginate(20)->withQueryString();
+        $bookings = $q->orderByDesc('scheduled_at')->paginate(20)->withQueryString();
         return view('owner.booking', compact('bookings'));
     }
     public function create() {
