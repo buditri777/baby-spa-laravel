@@ -341,6 +341,7 @@
   <script src="{{ asset('sneat/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
   <script src="{{ asset('sneat/vendor/js/menu.js') }}"></script>
   <script src="{{ asset('sneat/js/main.js') }}"></script>
+  <script src="{{ asset('sneat/fonts/iconify/iconify.js') }}"></script>
   @stack('scripts')
 </body>
 </html>

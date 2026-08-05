@@ -30,21 +30,69 @@ class DashboardController extends Controller
             return view("dashboard", compact("todayBookings"));
         }
 
-        $qBooking = Booking::whereDate("scheduled_at", $today);
-        $qRevenue = Payment::where("status","PAID")->whereMonth("paid_at", now()->month)->whereYear("paid_at", now()->year);
-        if ($scope) {
-            $qBooking->where("branch_id", $scope);
-            $qRevenue->whereHas("booking", fn($b) => $b->where("branch_id", $scope));
-        }
+        $tz         = 'Asia/Jakarta';
+        $todayStart = now($tz)->startOfDay();
+        $todayEnd   = now($tz)->endOfDay();
+        $monthStart = now($tz)->startOfMonth();
+        $sevenDaysAgo = now($tz)->subDays(7);
 
-        return view("dashboard", [
-            "bookingsToday"   => $qBooking->count(),
-            "revenueMonth"    => $qRevenue->sum("amount"),
-            "totalPatients"   => User::where("role","PARENT")->count(),
-            "totalTherapists" => User::where("role","THERAPIST")->where("is_active",true)->count(),
-            "recentBookings"  => Booking::with(["child","service","therapist"])
-                ->when($scope, fn($q) => $q->where("branch_id", $scope))
-                ->orderByDesc("scheduled_at")->take(10)->get(),
+        // Today bookings (CONFIRMED + COMPLETED)
+        $qBooking = Booking::whereBetween('scheduled_at', [$todayStart, $todayEnd])
+            ->whereIn('status', ['CONFIRMED','COMPLETED','REQUESTED']);
+        if ($scope) $qBooking->where('branch_id', $scope);
+        $bookingsToday = $qBooking->count();
+
+        // Month revenue
+        $qRevMonth = Payment::where('status','PAID')
+            ->whereBetween('paid_at', [$monthStart, now($tz)]);
+        if ($scope) $qRevMonth->whereHas('booking', fn($b) => $b->where('branch_id', $scope));
+        $revenueMonth = $qRevMonth->sum('amount');
+
+        // Today revenue
+        $qRevToday = Payment::where('status','PAID')
+            ->whereBetween('paid_at', [$todayStart, $todayEnd]);
+        if ($scope) $qRevToday->whereHas('booking', fn($b) => $b->where('branch_id', $scope));
+        $todayRevenue   = $qRevToday->sum('amount');
+        $todayPaidCount = $qRevToday->count();
+
+        // Today sessions
+        $todaySessions = \App\Models\Session::whereBetween('ended_at', [$todayStart, $todayEnd])->count();
+
+        // Tren 7 hari
+        $trend = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $d    = now($tz)->subDays($i)->startOfDay();
+            $dEnd = $d->copy()->endOfDay();
+            $q = Payment::where('status','PAID')->whereBetween('paid_at', [$d, $dEnd]);
+            if ($scope) $q->whereHas('booking', fn($b) => $b->where('branch_id', $scope));
+            $trend[] = [
+                'label' => $d->locale('id')->isoFormat('ddd'),
+                'total' => (float) $q->sum('amount'),
+            ];
+        }
+        $trendMax = max(1, ...array_column($trend, 'total'));
+
+        // New patients 7 days
+        $newPatients       = Child::where('created_at', '>=', $sevenDaysAgo)->count();
+        $recentNewPatients = Child::with('parent:id,name,phone,referral_source')
+            ->where('created_at', '>=', $sevenDaysAgo)
+            ->orderByDesc('created_at')->take(8)->get();
+
+        return view('dashboard', [
+            'bookingsToday'      => $bookingsToday,
+            'revenueMonth'       => $revenueMonth,
+            'todayRevenue'       => $todayRevenue,
+            'todayPaidCount'     => $todayPaidCount,
+            'todaySessions'      => $todaySessions,
+            'trend'              => $trend,
+            'trendMax'           => $trendMax,
+            'totalPatients'      => User::where('role','PARENT')->count(),
+            'totalTherapists'    => User::where('role','THERAPIST')->where('is_active',true)->count(),
+            'newPatients'        => $newPatients,
+            'recentNewPatients'  => $recentNewPatients,
+            'recentBookings'     => Booking::with(['child','service','therapist'])
+                ->when($scope, fn($q) => $q->where('branch_id', $scope))
+                ->orderByDesc('scheduled_at')->take(10)->get(),
         ]);
     }
 
