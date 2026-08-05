@@ -59,18 +59,30 @@ class SuperAdminSeeder extends Seeder
         ];
 
         foreach ($accounts as $data) {
-            $role = $data['role'];
+            $spatieRole = $data['role'];
             unset($data['role']);
+
+            // Map Spatie role → enum kolom role
+            $roleMap = [
+                'super_admin'  => 'SUPER_ADMIN',
+                'owner'        => 'OWNER',
+                'terapis'      => 'THERAPIST',
+                'orang_tua'    => 'PARENT',
+                'resepsionis'  => 'RECEPTIONIST',
+                'direktur'     => 'DIREKTUR',
+                'admin'        => 'ADMIN',
+            ];
 
             $user = User::updateOrCreate(
                 ['id' => $data['id']],
                 array_merge($data, [
+                    'role'              => $roleMap[$spatieRole] ?? 'PARENT',
                     'is_active'         => true,
                     'phone_verified_at' => now(),
                 ])
             );
 
-            $user->syncRoles([$role]);
+            $user->syncRoles([$spatieRole]);
         }
 
         $this->command->info('Seeded ' . count($accounts) . ' user accounts (password: Admin123!)');
