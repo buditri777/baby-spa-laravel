@@ -42,7 +42,7 @@ class LoginController extends Controller
     {
         return match($role) {
             'THERAPIST'  => '/therapist/jadwal',
-            'PARENT'     => '/dashboard',
+            'PARENT'     => '/parent/dashboard',
             default      => '/owner/dashboard',
         };
     }
