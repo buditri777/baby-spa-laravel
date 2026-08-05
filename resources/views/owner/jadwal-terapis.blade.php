@@ -24,9 +24,9 @@
       </thead>
       <tbody>
       @forelse($therapists as $t)
-      @php $active = $t->dayActives->where('date',$date)->first(); @endphp
+      @php $active = $dayActives[$t->id] ?? null; @endphp
       <tr>
-        <td class="fw-semibold">{{ $t->user?->name }}</td>
+        <td class="fw-semibold">{{ $t->name }}</td>
         <td class="text-muted">{{ $t->branch?->name ?? "—" }}</td>
         <td>
           @if($active && $active->is_active)
